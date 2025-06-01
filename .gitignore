@@ -1,0 +1,29 @@
+# Node
+node_modules/
+.env
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs
+logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# VSCode
+.vscode/
+
+# Misc
+*.local
+coverage/
+dist/
+build/
+
+# Optional
+*.sqlite
+*.sqlite3
+
+# By Copilot
