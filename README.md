@@ -44,13 +44,67 @@ A modern, feature-rich Node.js backend for e-commerce applications with product 
 - `DELETE /api/products/:id` - Delete a product
 
 ### Orders
-- `POST /api/orders` - Create a new order
+- `POST /api/orders` - Create a new order (with payment link)
 - `GET /api/payment/order/:orderId` - Get order details
+
+### Payments
+- `POST /api/payment/save-payment` - Save payment details after Razorpay payment
 
 ### Admin
 - `GET /api/admin/products` - Get all products (admin)
 - `GET /api/admin/orders` - Get all orders (admin)
+- `GET /api/admin/orders/:id` - Get order details (admin)
+- `PATCH /api/admin/orders/:id/status` - Update order status (admin)
+- `GET /api/admin/stats` - Get dashboard statistics (admin)
 - `GET /admin` - Access the admin dashboard
+
+## Database Schema
+
+### Table: `product`
+| Field        | Type              | Description                |
+|--------------|-------------------|----------------------------|
+| id           | int (PK, AI)      | Product ID                 |
+| name         | varchar(255)      | Product name               |
+| description  | text              | Product description        |
+| price        | decimal(10,2)     | Product price              |
+| variant      | varchar(255)      | Product variant            |
+| inventory    | int               | Inventory count            |
+| image_url    | varchar(500)      | Product image URL          |
+| category     | varchar(100)      | Product category           |
+| is_new       | tinyint(1)        | Is new product             |
+| is_hot       | tinyint(1)        | Is hot product             |
+| rating       | decimal(2,1)      | Product rating             |
+| reviews      | int               | Number of reviews          |
+| colors       | longtext (JSON)   | Available colors           |
+
+### Table: `orders`
+| Field      | Type           | Description         |
+|------------|----------------|---------------------|
+| id         | varchar(100)   | Order ID (UUID)     |
+| product_id | int            | Product ID          |
+| full_name  | varchar(255)   | Customer name       |
+| email      | varchar(255)   | Customer email      |
+| phone      | varchar(20)    | Customer phone      |
+| address    | text           | Address             |
+| city       | varchar(100)   | City                |
+| state      | varchar(100)   | State               |
+| zip        | varchar(20)    | Zip code            |
+| variant    | varchar(50)    | Product variant     |
+| quantity   | int            | Quantity            |
+| total      | decimal(10,2)  | Total amount        |
+| status     | varchar(50)    | Order status        |
+| created_at | timestamp      | Order creation time |
+
+### Table: `payment`
+| Field               | Type           | Description                |
+|---------------------|----------------|----------------------------|
+| id                  | int (PK, AI)   | Payment ID                 |
+| order_id            | varchar(255)   | Order ID                   |
+| razorpay_payment_id | varchar(255)   | Razorpay payment ID        |
+| razorpay_order_id   | varchar(255)   | Razorpay order ID          |
+| razorpay_signature  | text           | Razorpay signature         |
+| status              | varchar(50)    | Payment status             |
+| created_at          | timestamp      | Payment creation time      |
 
 ## Setup Guide
 
@@ -96,49 +150,7 @@ A modern, feature-rich Node.js backend for e-commerce applications with product 
    ```
 
 4. Set up the database
-   ```sql
-   CREATE DATABASE ecommerce;
-   USE ecommerce;
-
-   CREATE TABLE products (
-     id INT AUTO_INCREMENT PRIMARY KEY,
-     name VARCHAR(255) NOT NULL,
-     description TEXT,
-     price DECIMAL(10, 2) NOT NULL,
-     image VARCHAR(255),
-     inventory INT DEFAULT 0,
-     variant VARCHAR(255)
-   );
-
-   CREATE TABLE orders (
-     id VARCHAR(36) PRIMARY KEY,
-     product_id INT,
-     full_name VARCHAR(255) NOT NULL,
-     email VARCHAR(255) NOT NULL,
-     phone VARCHAR(20),
-     address TEXT,
-     city VARCHAR(100),
-     state VARCHAR(100),
-     zip VARCHAR(20),
-     variant VARCHAR(255),
-     quantity INT DEFAULT 1,
-     total DECIMAL(10, 2) NOT NULL,
-     status VARCHAR(50) DEFAULT 'pending',
-     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-     FOREIGN KEY (product_id) REFERENCES products(id)
-   );
-
-   CREATE TABLE payment (
-     id INT AUTO_INCREMENT PRIMARY KEY,
-     order_id VARCHAR(36),
-     razorpay_payment_id VARCHAR(255),
-     razorpay_order_id VARCHAR(255),
-     razorpay_signature VARCHAR(255),
-     status VARCHAR(50),
-     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-     FOREIGN KEY (order_id) REFERENCES orders(id)
-   );
-   ```
+   - Import the [`ecommerce (1).sql`](ecommerce%20(1).sql) file into your MySQL server to create the required tables and sample data.
 
 5. Start the server
    ```sh
@@ -159,7 +171,7 @@ A modern, feature-rich Node.js backend for e-commerce applications with product 
 
 ### Customizing Email Templates
 
-Modify the email HTML templates in the `orderController.js` file to customize email notifications.
+Modify the email HTML templates in the [`orderController.js`](controllers/orderController.js) file to customize email notifications.
 
 ## Credits
 
