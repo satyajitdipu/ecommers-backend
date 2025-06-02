@@ -1,13 +1,23 @@
 {
-  "name": "ecommerce-backend",
+  "name": "shopx-ecommerce-backend",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
-  "description": "This is a basic Node.js backend structure for an e-commerce application.",
-  "keywords": [],
-  "author": "",
+  "description": "A modern, feature-rich Node.js backend for e-commerce applications with product management, order processing, payment integration, and an admin dashboard.",
+  "keywords": [
+    "ecommerce",
+    "nodejs",
+    "express",
+    "razorpay",
+    "mysql",
+    "api",
+    "backend",
+    "admin-dashboard"
+  ],
+  "author": "Satyajit Sahoo",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^2.2.0",
@@ -18,5 +28,15 @@
     "nodemailer": "^7.0.3",
     "razorpay": "^2.9.6",
     "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/shopx-ecommerce-backend.git"
   }
 }

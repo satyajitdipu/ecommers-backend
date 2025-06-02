@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHOPX Command Center</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #00C3FF;
+            --primary-dark: #0087B4;
+            --secondary-color: #1DE9B6;
+            --accent-color: #A647FF;
+            --danger-color: #FF5252;
+            --warning-color: #FFD740;
+            --dark-bg: #0A1929;
+            --card-bg: rgba(9, 21, 38, 0.9);
+            --panel-bg: rgba(16, 33, 54, 0.95);
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --sidebar-width: 280px;
+            --border-radius: 12px;
+            --card-shadow: 0 8px 32px rgba(0, 195, 255, 0.1);
+            --success-glow: 0 0 20px rgba(29, 233, 182, 0.5);
+            --primary-glow: 0 0 20px rgba(0, 195, 255, 0.4);
+            --warning-glow: 0 0 20px rgba(255, 215, 64, 0.5);
+            --danger-glow: 0 0 20px rgba(255, 82, 82, 0.5);
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--dark-bg);
+            background-image: 
+                radial-gradient(circle at 20% 35%, rgba(0, 195, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 75% 15%, rgba(166, 71, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 85% 80%, rgba(29, 233, 182, 0.15) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: var(--panel-bg);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(0, 195, 255, 0.2);
+            padding-top: 20px;
+            z-index: 1000;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 5px 0 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .sidebar-header {
+            padding: 0 25px 25px;
+            border-bottom: 1px solid rgba(0, 195, 255, 0.2);
+            margin-bottom: 20px;
+        }
+        
+        .sidebar-header h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 600;
+            letter-spacing: 1px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+          .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 12px 25px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sidebar-menu a:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 195, 255, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+        
+        .sidebar-menu a:hover:before {
+            transform: translateX(100%);
+        }
+        
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            color: var(--text-primary);
+            border-left-color: var(--primary-color);
+            background: rgba(0, 195, 255, 0.1);
+        }
+        
+        .sidebar-menu a.active {
+            border-left-color: var(--secondary-color);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .sidebar-menu i {
+            margin-right: 12px;
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+        
+        .module-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 195, 255, 0.2);
+        }
+          .module-header h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 500;
+            letter-spacing: 1px;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        
+        .digital-clock {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--secondary-color);
+            background: rgba(0, 0, 0, 0.2);
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(29, 233, 182, 0.3);
+            letter-spacing: 2px;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid rgba(0, 195, 255, 0.2);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--primary-glow);
+        }
+        
+        .card-dashboard {
+            height: 100%;
+        }
+        
+        .card-header {
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(0, 195, 255, 0.2);
+            color: var(--text-primary);
+            font-weight: 500;
+            padding: 15px 20px;
+        }
+        
+        .card-header h5 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            margin: 0;
+        }
+          .stats-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stats-card:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+        }
+        
+        .stats-card .card-body {
+            padding: 25px;
+        }
+        
+        .stats-card.products:after {
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+        }
+        
+        .stats-card.orders:after {
+            background: linear-gradient(90deg, var(--warning-color), darkorange);
+        }
+        
+        .stats-card.revenue:after {
+            background: linear-gradient(90deg, var(--secondary-color), #009688);
+        }
+        
+        .stats-card:hover.products {
+            box-shadow: var(--primary-glow);
+        }
+        
+        .stats-card:hover.revenue {
+            box-shadow: var(--success-glow);
+        }
+        
+        .stats-card:hover.orders {
+            box-shadow: var(--warning-glow);
+        }
+        
+        .stats-icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .stats-card.products .stats-icon {
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+        
+        .stats-card.orders .stats-icon {
+            color: var(--warning-color);
+            border: 2px solid var(--warning-color);
+        }
+        
+        .stats-card.revenue .stats-icon {
+            color: var(--secondary-color);
+            border: 2px solid var(--secondary-color);
+        }
+        
+        .stats-text h6 {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stats-text h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 500;
+            margin-bottom: 0;
+        }
+        
+        .stats-card.products h3 {
+            color: var(--primary-color);
+        }
+        
+        .stats-card.orders h3 {
+            color: var(--warning-color);
+        }
+        
+        .stats-card.revenue h3 {
+            color: var(--secondary-color);
+        }
+        
+        .table-container {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 0;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 195, 255, 0.2);
+            overflow: hidden;
+        }
+          .table-container .table-header {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(0, 195, 255, 0.2);
+        }
+        
+        .table-container .table-content {
+            padding: 0;
+        }
+        
+        .form-container {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 195, 255, 0.2);
+        }
+        
+        .table {
+            color: var(--text-primary);
+            margin-bottom: 0;
+        }
+        
+        .table thead th {
+            background: rgba(0, 0, 0, 0.2);
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            padding: 15px 20px;
+            border-color: rgba(0, 195, 255, 0.2);
+        }
+        
+        .table tbody td {
+            padding: 15px 20px;
+            vertical-align: middle;
+            border-color: rgba(0, 195, 255, 0.1);
+        }
+        
+        .table tbody tr {
+            transition: all 0.3s ease;
+        }
+        
+        .table tbody tr:hover {
+            background: rgba(0, 195, 255, 0.05);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .status-approved {
+            background: rgba(29, 233, 182, 0.1);
+            color: var(--secondary-color);
+            border: 1px solid rgba(29, 233, 182, 0.3);
+        }
+        
+        .status-pending {
+            background: rgba(255, 215, 64, 0.1);
+            color: var(--warning-color);
+            border: 1px solid rgba(255, 215, 64, 0.3);
+        }
+        
+        .status-failed {
+            background: rgba(255, 82, 82, 0.1);
+            color: var(--danger-color);
+            border: 1px solid rgba(255, 82, 82, 0.3);
+        }
+        
+        .btn-action {
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 8px;
+            border-radius: var(--border-radius);
+            background: transparent;
+            transition: all 0.3s ease;
+        }
+          .btn-action.edit-product {
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+        
+        .btn-action.delete-product {
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+        }
+        
+        .btn-action.view-order {
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+        }
+        
+        .btn-action.update-status {
+            color: var(--secondary-color);
+            border: 1px solid var(--secondary-color);
+        }
+        
+        .btn-action.update-status[data-status="failed"] {
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+        }
+        
+        .btn-action:hover {
+            transform: translateY(-3px);
+        }
+        
+        .btn-action.edit-product:hover {
+            background: rgba(0, 195, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 195, 255, 0.3);
+        }
+        
+        .btn-action.delete-product:hover {
+            background: rgba(255, 82, 82, 0.1);
+            box-shadow: 0 0 15px rgba(255, 82, 82, 0.3);
+        }
+        
+        .btn-action.view-order:hover {
+            background: rgba(166, 71, 255, 0.1);
+            box-shadow: 0 0 15px rgba(166, 71, 255, 0.3);
+        }
+        
+        .btn-action.update-status:hover {
+            background: rgba(29, 233, 182, 0.1);
+            box-shadow: 0 0 15px rgba(29, 233, 182, 0.3);
+        }
+        
+        .btn-action.update-status[data-status="failed"]:hover {
+            background: rgba(255, 82, 82, 0.1);
+            box-shadow: 0 0 15px rgba(255, 82, 82, 0.3);
+        }
+        
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 30px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(0, 195, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+          .login-container h2 {
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            margin-bottom: 25px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .form-control, .form-select {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(0, 195, 255, 0.2);
+            border-radius: var(--border-radius);
+            color: var(--text-primary);
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            background: rgba(0, 0, 0, 0.3);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(0, 195, 255, 0.25);
+            color: var(--text-primary);
+        }
+        
+        .form-control::placeholder {
+            color: var(--text-secondary);
+        }
+        
+        .form-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .btn {
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .btn:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+        
+        .btn:before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            transition: all 0.3s ease;
+            z-index: -1;
+        }
+        
+        .btn:hover:before {
+            width: 100%;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+            border: none;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            box-shadow: var(--primary-glow);
+        }
+        
+        .btn-primary:before {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary-color));
+        }
+        
+        .btn-success {
+            background: linear-gradient(to right, var(--secondary-color), #009688);
+            border: none;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            box-shadow: var(--success-glow);
+        }
+        
+        .btn-success:before {
+            background: linear-gradient(to right, #009688, var(--secondary-color));
+        }
+        
+        .btn-outline-primary {
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            background: transparent;
+        }
+        
+        .btn-outline-primary:hover {
+            background: rgba(0, 195, 255, 0.1);
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 25, 41, 0.9);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0, 195, 255, 0.1);
+            border-radius: 50%;
+            border-top: 3px solid var(--primary-color);
+            border-right: 3px solid var(--secondary-color);
+            border-bottom: 3px solid var(--accent-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .modal-content {
+            background: var(--panel-bg);
+            border: 1px solid rgba(0, 195, 255, 0.2);
+            border-radius: var(--border-radius);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--card-shadow);
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid rgba(0, 195, 255, 0.2);
+        }
+        
+        .modal-header .modal-title {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--text-primary);
+        }
+        
+        .modal-header .btn-close {
+            color: var(--text-primary);
+            filter: invert(1) brightness(100%);
+        }
+        
+        .modal-footer {
+            border-top: 1px solid rgba(0, 195, 255, 0.2);
+        }
+        
+        .alert-danger {
+            background: rgba(255, 82, 82, 0.1);
+            color: var(--danger-color);
+            border: 1px solid rgba(255, 82, 82, 0.3);
+            border-radius: var(--border-radius);
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .main-content.pushed {
+                margin-left: var(--sidebar-width);
+            }
+        }
+    </style>
+</head>
+<body>    <div id="loader" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+    
+    <div id="login-section">
+        <div class="login-container">
+            <h2>SHOPX COMMAND</h2>
+            <form id="login-form">
+                <div class="mb-3">
+                    <label for="username" class="form-label">USERNAME</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-transparent border-end-0 text-primary">
+                            <i class="bi bi-person"></i>
+                        </span>
+                        <input type="text" class="form-control border-start-0" id="username" required>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label for="password" class="form-label">PASSWORD</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-transparent border-end-0 text-primary">
+                            <i class="bi bi-shield-lock"></i>
+                        </span>
+                        <input type="password" class="form-control border-start-0" id="password" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">AUTHENTICATE</button>
+            </form>
+            <div class="alert alert-danger mt-3" id="login-error" style="display: none;"></div>
+        </div>
+    </div>
+    
+    <div id="admin-panel" style="display: none;">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h4>SHOPX COMMAND</h4>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#dashboard" class="nav-link active" data-section="dashboard-section"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+                <li><a href="#products" class="nav-link" data-section="products-section"><i class="bi bi-box-seam"></i> Products</a></li>
+                <li><a href="#orders" class="nav-link" data-section="orders-section"><i class="bi bi-cart3"></i> Orders</a></li>
+                <li><a href="#" id="logout-btn"><i class="bi bi-power"></i> Logout</a></li>
+            </ul>
+        </div>
+        
+        <div class="main-content">
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="content-section active">
+                <div class="module-header">
+                    <h2>SYSTEM DASHBOARD</h2>
+                    <div class="digital-clock" id="digital-clock">00:00:00</div>
+                </div>
+                  <div class="row">
+                    <div class="col-md-4">
+                        <div class="card stats-card products">
+                            <div class="card-body">
+                                <div class="stats-icon">
+                                    <i class="bi bi-box-seam"></i>
+                                </div>
+                                <div class="stats-text">
+                                    <h6>Total Products</h6>
+                                    <h3 id="product-count">0</h3>
+                                </div>
+                                <div class="progress mt-3" style="height: 6px;">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 100%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card stats-card orders">
+                            <div class="card-body">
+                                <div class="stats-icon">
+                                    <i class="bi bi-cart3"></i>
+                                </div>
+                                <div class="stats-text">
+                                    <h6>Total Orders</h6>
+                                    <h3 id="order-count">0</h3>
+                                </div>
+                                <div class="progress mt-3" style="height: 6px;">
+                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 100%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card stats-card revenue">
+                            <div class="card-body">
+                                <div class="stats-icon">
+                                    <i class="bi bi-currency-rupee"></i>
+                                </div>
+                                <div class="stats-text">
+                                    <h6>Total Revenue</h6>
+                                    <h3 id="revenue">₹0</h3>
+                                </div>
+                                <div class="progress mt-3" style="height: 6px;">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: 100%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                  <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5><i class="bi bi-clock-history me-2"></i> RECENT ORDERS</h5>
+                                <a href="#orders" class="btn btn-sm btn-outline-primary nav-link" data-section="orders-section">
+                                    <i class="bi bi-arrow-right"></i> VIEW ALL
+                                </a>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>ORDER ID</th>
+                                                <th>CUSTOMER</th>
+                                                <th>PRODUCT</th>
+                                                <th>AMOUNT</th>
+                                                <th>STATUS</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="recent-orders"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5><i class="bi bi-graph-up-arrow me-2"></i> TOP SELLING PRODUCTS</h5>
+                                <a href="#products" class="btn btn-sm btn-outline-primary nav-link" data-section="products-section">
+                                    <i class="bi bi-arrow-right"></i> VIEW ALL
+                                </a>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>PRODUCT</th>
+                                                <th>QUANTITY SOLD</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="top-products"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+              <!-- Products Section -->
+            <div id="products-section" class="content-section">
+                <div class="module-header">
+                    <h2>PRODUCT MANAGEMENT</h2>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                        <i class="bi bi-plus-lg me-2"></i> ADD NEW PRODUCT
+                    </button>
+                </div>
+                
+                <div class="table-container">
+                    <div class="table-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-boxes me-2"></i> PRODUCT INVENTORY</h5>
+                        <div class="d-flex align-items-center">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Search products..." id="product-search">
+                                <button class="btn btn-outline-primary" type="button">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-content">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>IMAGE</th>
+                                        <th>NAME</th>
+                                        <th>PRICE</th>
+                                        <th>INVENTORY</th>
+                                        <th>VARIANT</th>
+                                        <th>ACTIONS</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="products-table"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+              <!-- Orders Section -->
+            <div id="orders-section" class="content-section">
+                <div class="module-header">
+                    <h2>ORDER MANAGEMENT</h2>
+                    <div class="d-flex align-items-center">
+                        <select class="form-select me-2" id="order-status-filter">
+                            <option value="all">All Status</option>
+                            <option value="approved">Approved</option>
+                            <option value="pending">Pending</option>
+                            <option value="failed">Failed</option>
+                        </select>
+                        <button class="btn btn-outline-primary" id="refresh-orders">
+                            <i class="bi bi-arrow-repeat"></i> REFRESH
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <div class="table-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-cart-check me-2"></i> ORDER HISTORY</h5>
+                        <div class="d-flex align-items-center">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Search orders..." id="order-search">
+                                <button class="btn btn-outline-primary" type="button">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-content">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ORDER ID</th>
+                                        <th>CUSTOMER</th>
+                                        <th>PRODUCT</th>
+                                        <th>TOTAL</th>
+                                        <th>DATE</th>
+                                        <th>STATUS</th>
+                                        <th>ACTIONS</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="orders-table"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+      <!-- Add Product Modal -->
+    <div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-plus-circle me-2"></i> ADD NEW PRODUCT</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-product-form">
+                        <div class="mb-3">
+                            <label class="form-label">PRODUCT NAME</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">DESCRIPTION</label>
+                            <textarea class="form-control" name="description" rows="3" required></textarea>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">PRICE (₹)</label>
+                                <input type="number" class="form-control" name="price" min="0" step="0.01" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">INVENTORY</label>
+                                <input type="number" class="form-control" name="inventory" min="0" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">IMAGE URL</label>
+                            <input type="text" class="form-control" name="image" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">VARIANT</label>
+                            <input type="text" class="form-control" name="variant">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">CANCEL</button>
+                    <button type="button" class="btn btn-primary" id="save-product-btn">
+                        <i class="bi bi-save me-2"></i> SAVE PRODUCT
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Product Modal -->
+    <div class="modal fade" id="editProductModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-pencil-square me-2"></i> EDIT PRODUCT</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-product-form">
+                        <input type="hidden" name="id">
+                        <div class="mb-3">
+                            <label class="form-label">PRODUCT NAME</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">DESCRIPTION</label>
+                            <textarea class="form-control" name="description" rows="3" required></textarea>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">PRICE (₹)</label>
+                                <input type="number" class="form-control" name="price" min="0" step="0.01" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">INVENTORY</label>
+                                <input type="number" class="form-control" name="inventory" min="0" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">IMAGE URL</label>
+                            <input type="text" class="form-control" name="image" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">VARIANT</label>
+                            <input type="text" class="form-control" name="variant">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">CANCEL</button>
+                    <button type="button" class="btn btn-primary" id="update-product-btn">
+                        <i class="bi bi-check-circle me-2"></i> UPDATE PRODUCT
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+      <!-- View Order Modal -->
+    <div class="modal fade" id="viewOrderModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-info-circle me-2"></i> ORDER DETAILS</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="order-details-content">
+                    <!-- Order details will be populated here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">CLOSE</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>    <script>
+        // Utility functions
+        const $ = (selector) => document.querySelector(selector);
+        const $$ = (selector) => document.querySelectorAll(selector);
+        
+        const showLoader = () => $('#loader').style.display = 'flex';
+        const hideLoader = () => $('#loader').style.display = 'none';
+        
+        const formatDate = (dateString) => {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        };
+        
+        const formatCurrency = (amount) => {
+            return '₹' + parseFloat(amount).toFixed(2);
+        };
+        
+        const getStatusBadge = (status) => {
+            const statusClass = {
+                'approved': 'status-approved',
+                'pending': 'status-pending',
+                'failed': 'status-failed',
+                'error': 'status-failed'
+            }[status.toLowerCase()] || 'status-pending';
+            
+            return `<span class="status-badge ${statusClass}">${status.toUpperCase()}</span>`;
+        };
+        
+        // Digital clock
+        const updateClock = () => {
+            const now = new Date();
+            const time = now.toLocaleTimeString('en-US', { 
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            
+            if ($('#digital-clock')) {
+                $('#digital-clock').textContent = time;
+            }
+            
+            setTimeout(updateClock, 1000);
+        };
+          // Authentication functions
+        const login = async (username, password) => {
+            try {
+                showLoader();
+                // Check authentication
+                const response = await fetch(`/api/admin/auth?username=${username}&password=${password}`);
+                
+                if (response.status === 401) {
+                    throw new Error('Invalid username or password');
+                }
+                
+                if (!response.ok) {
+                    throw new Error('Login failed. Please try again.');
+                }
+                
+                // Save credentials for further requests
+                sessionStorage.setItem('admin_username', username);
+                sessionStorage.setItem('admin_password', password);
+                
+                // Show admin panel
+                $('#login-section').style.display = 'none';
+                $('#admin-panel').style.display = 'block';
+                
+                // Start clock
+                updateClock();
+                
+                // Load initial data
+                loadDashboard();
+                
+            } catch (error) {
+                $('#login-error').textContent = error.message;
+                $('#login-error').style.display = 'block';
+            } finally {
+                hideLoader();
+            }
+        };
+        
+        const logout = () => {
+            sessionStorage.removeItem('admin_username');
+            sessionStorage.removeItem('admin_password');
+            $('#login-section').style.display = 'block';
+            $('#admin-panel').style.display = 'none';
+        };
+        
+        const checkAuth = () => {
+            const username = sessionStorage.getItem('admin_username');
+            const password = sessionStorage.getItem('admin_password');
+            
+            if (username && password) {
+                $('#login-section').style.display = 'none';
+                $('#admin-panel').style.display = 'block';
+                updateClock();
+                loadDashboard();
+            } else {
+                $('#login-section').style.display = 'block';
+                $('#admin-panel').style.display = 'none';
+            }
+        };
+        
+        // API request function with authentication
+        const apiRequest = async (endpoint, method = 'GET', body = null) => {
+            const username = sessionStorage.getItem('admin_username');
+            const password = sessionStorage.getItem('admin_password');
+            
+            if (!username || !password) {
+                logout();
+                throw new Error('Authentication required');
+            }
+            
+            const url = `/api/admin/${endpoint}?username=${username}&password=${password}`;
+            
+            const options = {
+                method,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+            
+            const response = await fetch(url, options);
+            
+            if (response.status === 401) {
+                logout();
+                throw new Error('Authentication failed');
+            }
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || 'Request failed');
+            }
+            
+            return response.json();
+        };
+        
+        // Dashboard functions
+        const loadDashboard = async () => {
+            showLoader();
+            try {
+                const stats = await apiRequest('stats');
+                
+                // Update stats cards
+                $('#product-count').textContent = stats.productCount;
+                $('#order-count').textContent = stats.orderCount;
+                $('#revenue').textContent = formatCurrency(stats.totalRevenue || 0);
+                
+                // Populate recent orders
+                const recentOrdersHtml = stats.recentOrders.map(order => `
+                    <tr>
+                        <td>${order.id.substr(0, 8)}...</td>
+                        <td>${order.full_name}</td>
+                        <td>${order.product_name}</td>
+                        <td>${formatCurrency(order.total)}</td>
+                        <td>${getStatusBadge(order.status)}</td>
+                    </tr>
+                `).join('');
+                
+                $('#recent-orders').innerHTML = recentOrdersHtml || '<tr><td colspan="5" class="text-center">No recent orders</td></tr>';
+                
+                // Populate top products
+                const topProductsHtml = stats.topProducts.map(product => `
+                    <tr>
+                        <td>${product.name}</td>
+                        <td>${product.total_sold}</td>
+                    </tr>
+                `).join('');
+                
+                $('#top-products').innerHTML = topProductsHtml || '<tr><td colspan="2" class="text-center">No data available</td></tr>';
+                
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                alert('Failed to load dashboard data. Please try again.');
+            } finally {
+                hideLoader();
+            }
+        };
+        
+        // Products functions
+        const loadProducts = async () => {
+            showLoader();
+            try {
+                const products = await apiRequest('products');
+                
+                const productsHtml = products.map(product => `
+                    <tr>
+                        <td>${product.id}</td>
+                        <td>
+                            <img src="${product.image}" alt="${product.name}" width="50" height="50" style="object-fit: cover;">
+                        </td>
+                        <td>${product.name}</td>
+                        <td>${formatCurrency(product.price)}</td>
+                        <td>${product.inventory}</td>
+                        <td>${product.variant || '-'}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary btn-action edit-product" data-id="${product.id}">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger btn-action delete-product" data-id="${product.id}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+                
+                $('#products-table').innerHTML = productsHtml || '<tr><td colspan="7" class="text-center">No products found</td></tr>';
+                
+                // Add event listeners to the edit and delete buttons
+                $$('.edit-product').forEach(btn => {
+                    btn.addEventListener('click', () => editProduct(btn.dataset.id));
+                });
+                
+                $$('.delete-product').forEach(btn => {
+                    btn.addEventListener('click', () => deleteProduct(btn.dataset.id));
+                });
+                
+            } catch (error) {
+                console.error('Error loading products:', error);
+                alert('Failed to load products. Please try again.');
+            } finally {
+                hideLoader();
+            }
+        };
+        
+        const saveProduct = async () => {
+            const form = $('#add-product-form');
+            const formData = new FormData(form);
+            
+            const productData = {
+                name: formData.get('name'),
+                description: formData.get('description'),
+                price: parseFloat(formData.get('price')),
+                image: formData.get('image'),
+                inventory: parseInt(formData.get('inventory')),
+                variant: formData.get('variant')
+            };
+            
+            showLoader();
+            try {
+                await apiRequest('products', 'POST', productData);
+                bootstrap.Modal.getInstance($('#addProductModal')).hide();
+                form.reset();
+                loadProducts();
+                alert('Product added successfully!');
+            } catch (error) {
+                console.error('Error saving product:', error);
+                alert('Failed to save product. Please try again.');
+            } finally {
+                hideLoader();
+            }
+        };
+        
+        const editProduct = async (productId) => {
+            showLoader();
+            try {
+                const product = await apiRequest(`products/${productId}`);
+                
+                const form = $('#edit-product-form');
+                form.id.value = product.id;
+                form.name.value = product.name;
+                form.description.value = product.description;
+                form.price.value = product.price;
+                form.image.value = product.image;
+                form.inventory.value = product.inventory;
+                form.variant.value = product.variant || '';
+                
+                const modal = new bootstrap.Modal($('#editProductModal'));
+                modal.show();
+            } catch (error) {
+                console.error('Error loading product:', error);
+                alert('Failed to load product details. Please try again.');
+            } finally {
+                hideLoader();
+            }
+        };
+        
+        const updateProduct = async () => {
+            const form = $('#edit-product-form');
+            const formData = new FormData(form);
+            
+            const productId = formData.get('id');
+            const productData = {
+                name: formData.get('name'),
+                description: formData.get('description'),
+                price: parseFloat(formData.get('price')),
+                image: formData.get('image'),
+                inventory: parseInt(formData.get('inventory')),
+                variant: formData.get('variant')
+            };
+            
+            showLoader();
+            try {
+                await apiRequest(`products/${productId}`, 'PUT', productData);
+                bootstrap.Modal.getInstance($('#editProductModal')).hide();
+                loadProducts();
+                alert('Product updated successfully!');
+            } catch (error) {
+                console.error('Error updating product:', error);
+                alert('Failed to update product. Please try again.');
+            } finally {
+                hideLoader();
+            }
+        };
+        
+        const deleteProduct = async (productId) => {
+            if (!confirm('Are you sure you want to delete this product?')) {
+                return;
+            }
+            
+            showLoader();
+            try {
+                await apiRequest(`products/${productId}`, 'DELETE');
+                loadProducts();
+                alert('Product deleted successfully!');
+            } catch (error) {
+                console.error('Error deleting product:', error);
+                alert('Failed to delete product. Please try again.');
+            } finally {
+                hideLoader();
+            }
+        };
+        
+        // Orders functions
+        const loadOrders = async () => {
+            showLoader();
+            try {
+                const orders = await apiRequest('orders');
+                
+                const ordersHtml = orders.map(order => `
+                    <tr>
+                        <td>${order.id.substr(0, 8)}...</td>
+                        <td>${order.full_name}</td>
+                        <td>${order.product_name}</td>
+                        <td>${formatCurrency(order.total)}</td>
+                        <td>${order.created_at ? formatDate(order.created_at) : '-'}</td>
+                        <td>${getStatusBadge(order.status)}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-info btn-action view-order" data-id="${order.id}">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-success btn-action update-status" data-id="${order.id}" data-status="approved">
+                                <i class="bi bi-check-circle"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger btn-action update-status" data-id="${order.id}" data-status="failed">
+                                <i class="bi bi-x-circle"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+                
+                $('#orders-table').innerHTML = ordersHtml || '<tr><td colspan="7" class="text-center">No orders found</td></tr>';
+                
+                // Add event listeners to the buttons
+                $$('.view-order').forEach(btn => {
+                    btn.addEventListener('click', () => viewOrder(btn.dataset.id));
+                });
+                
+                $$('.update-status').forEach(btn => {
+                    btn.addEventListener('click', () => updateOrderStatus(btn.dataset.id, btn.dataset.status));
+                });
+                
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                alert('Failed to load orders. Please try again.');
+            } finally {
+                hideLoader();
+            }
+        };
+        
+        const viewOrder = async (orderId) => {
+            showLoader();
+            try {
+                const order = await apiRequest(`orders/${orderId}`);
+                
+                const paymentInfo = order.payment ? `
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5>Payment Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Payment ID:</strong> ${order.payment.razorpay_payment_id || '-'}</p>
+                            <p><strong>Order ID:</strong> ${order.payment.razorpay_order_id || '-'}</p>
+                            <p><strong>Status:</strong> ${getStatusBadge(order.payment.status)}</p>
+                        </div>
+                    </div>
+                ` : '<p>No payment information available</p>';
+                
+                const modalContent = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <h5>Order Details</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Order ID:</strong> ${order.id}</p>
+                                    <p><strong>Status:</strong> ${getStatusBadge(order.status)}</p>
+                                    <p><strong>Date:</strong> ${order.created_at ? formatDate(order.created_at) : '-'}</p>
+                                    <p><strong>Total:</strong> ${formatCurrency(order.total)}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <h5>Customer Information</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Name:</strong> ${order.full_name}</p>
+                                    <p><strong>Email:</strong> ${order.email}</p>
+                                    <p><strong>Phone:</strong> ${order.phone}</p>
+                                    <p><strong>Address:</strong> ${order.address}, ${order.city}, ${order.state}, ${order.zip}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Product Information</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <img src="${order.image}" alt="${order.product_name}" width="100" class="me-3">
+                                        <div>
+                                            <h5>${order.product_name}</h5>
+                                            <p>Price: ${formatCurrency(order.price)}</p>
+                                            <p>Quantity: ${order.quantity}</p>
+                                            <p>Variant: ${order.variant || '-'}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            ${paymentInfo}
+                        </div>
+                    </div>
+                `;
+                
+                $('#order-details-content').innerHTML = modalContent;
+                
+                const modal = new bootstrap.Modal($('#viewOrderModal'));
+                modal.show();
+            } catch (error) {
+                console.error('Error loading order:', error);
+                alert('Failed to load order details. Please try again.');
+            } finally {
+                hideLoader();
+            }
+        };
+        
+        const updateOrderStatus = async (orderId, status) => {
+            if (!confirm(`Are you sure you want to mark this order as ${status}?`)) {
+                return;
+            }
+            
+            showLoader();
+            try {
+                await apiRequest(`orders/${orderId}/status`, 'PATCH', { status });
+                loadOrders();
+                alert('Order status updated successfully!');
+            } catch (error) {
+                console.error('Error updating order status:', error);
+                alert('Failed to update order status. Please try again.');
+            } finally {
+                hideLoader();
+            }
+        };
+        
+        // Navigation functions
+        const switchSection = (sectionId) => {
+            // Remove active class from all sections and links
+            $$('.content-section').forEach(section => section.classList.remove('active'));
+            $$('.nav-link').forEach(link => link.classList.remove('active'));
+            
+            // Add active class to the selected section and link
+            $(`#${sectionId}`).classList.add('active');
+            $$(`[data-section="${sectionId}"]`).forEach(link => link.classList.add('active'));
+            
+            // Load section data if needed
+            if (sectionId === 'products-section') {
+                loadProducts();
+            } else if (sectionId === 'orders-section') {
+                loadOrders();
+            } else if (sectionId === 'dashboard-section') {
+                loadDashboard();
+            }
+        };
+        
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check authentication status
+            checkAuth();
+            
+            // Login form submission
+            $('#login-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const username = $('#username').value;
+                const password = $('#password').value;
+                login(username, password);
+            });
+            
+            // Logout button click
+            $('#logout-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                logout();
+            });
+            
+            // Navigation links
+            $$('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    if (link.id === 'logout-btn') return;
+                    e.preventDefault();
+                    const sectionId = link.dataset.section;
+                    switchSection(sectionId);
+                });
+            });
+            
+            // Add product form submission
+            $('#save-product-btn').addEventListener('click', saveProduct);
+            
+            // Update product form submission
+            $('#update-product-btn').addEventListener('click', updateProduct);
+        });
+    </script>
+</body>
+</html>

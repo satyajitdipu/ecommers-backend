@@ -35,8 +35,8 @@ router.post('/orders', async (req, res) => {
   else if (transactionSim === '3') transactionStatus = 'error';
 
   const orderId = uuidv4();
-
-  db.query('SELECT * FROM products WHERE id = ?', [productId], async (err, results) => {
+console.log('Order ID:', orderId);
+  db.query('SELECT * FROM product WHERE id = ?', [productId], async (err, results) => {
     if (err || results.length === 0) return res.status(400).json({ message: 'Invalid product' });
 
     const product = results[0];
@@ -63,7 +63,7 @@ router.post('/orders', async (req, res) => {
       if (err2) return res.status(500).json({ message: 'Failed to save order', error: err2 });
 
       if (transactionStatus === 'approved') {
-        db.query('UPDATE products SET inventory = inventory - ? WHERE id = ?', [quantity, productId]);
+        db.query('UPDATE product SET inventory = inventory - ? WHERE id = ?', [quantity, productId]);
       }
 
       try {
