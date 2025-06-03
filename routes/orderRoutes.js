@@ -89,7 +89,7 @@ console.log('Order ID:', orderId);
             sms: true,
             email: true,
           },
-          callback_url: `http://localhost:3000/thank-you/${orderId}`,
+          callback_url: `https://ecommers-frontend-two.vercel.app/thank-you/${orderId}`,
           callback_method: 'get',
         });
 
