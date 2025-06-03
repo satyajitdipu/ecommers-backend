@@ -33,7 +33,7 @@ router.get('/auth', requireAuth, (req, res) => {
 // Get all products
 router.get('/products', requireAuth, async (req, res) => {
   try {
-    const [products] = await db.promise().query('SELECT * FROM products');
+    const [products] = await db.promise().query('SELECT * FROM product');
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch products', details: err.message });
@@ -44,7 +44,7 @@ router.get('/products', requireAuth, async (req, res) => {
 router.get('/products/:id', requireAuth, async (req, res) => {
   const { id } = req.params;
   try {
-    const [products] = await db.promise().query('SELECT * FROM products WHERE id = ?', [id]);
+    const [products] = await db.promise().query('SELECT * FROM product WHERE id = ?', [id]);
     if (!products || products.length === 0) {
       return res.status(404).json({ message: 'Product not found' });
     }
@@ -59,7 +59,7 @@ router.post('/products', requireAuth, async (req, res) => {
   const { name, description, price, image, inventory, variant } = req.body;
   try {
     const [result] = await db.promise().query(
-      'INSERT INTO products (name, description, price, image, inventory, variant) VALUES (?, ?, ?, ?, ?, ?)',
+      'INSERT INTO product (name, description, price, image, inventory, variant) VALUES (?, ?, ?, ?, ?, ?)',
       [name, description, price, image, inventory, variant]
     );
     res.status(201).json({ id: result.insertId, message: 'Product created successfully' });
@@ -87,7 +87,7 @@ router.put('/products/:id', requireAuth, async (req, res) => {
 router.delete('/products/:id', requireAuth, async (req, res) => {
   const { id } = req.params;
   try {
-    await db.promise().query('DELETE FROM products WHERE id = ?', [id]);
+    await db.promise().query('DELETE FROM product WHERE id = ?', [id]);
     res.json({ message: 'Product deleted successfully' });
   } catch (err) {
     res.status(500).json({ error: 'Failed to delete product', details: err.message });
@@ -160,7 +160,7 @@ router.patch('/orders/:id/status', requireAuth, async (req, res) => {
 router.get('/stats', requireAuth, async (req, res) => {
   try {
     // Get product count
-    const [productCount] = await db.promise().query('SELECT COUNT(*) as count FROM products');
+    const [productCount] = await db.promise().query('SELECT COUNT(*) as count FROM product');
     
     // Get order count
     const [orderCount] = await db.promise().query('SELECT COUNT(*) as count FROM orders');
@@ -169,7 +169,7 @@ router.get('/stats', requireAuth, async (req, res) => {
     const [recentOrders] = await db.promise().query(`
       SELECT o.id, o.full_name, o.total, o.status, p.name as product_name
       FROM orders o
-      JOIN products p ON o.product_id = p.id
+      JOIN product p ON o.product_id = p.id
       ORDER BY o.id DESC
       LIMIT 5
     `);
@@ -177,7 +177,7 @@ router.get('/stats', requireAuth, async (req, res) => {
     // Get top selling products
     const [topProducts] = await db.promise().query(`
       SELECT p.id, p.name, SUM(o.quantity) as total_sold
-      FROM products p
+      FROM product p
       JOIN orders o ON p.id = o.product_id
       WHERE o.status = 'approved'
       GROUP BY p.id
