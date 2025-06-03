@@ -158,7 +158,7 @@ A modern, feature-rich Node.js backend for e-commerce applications with product 
    ```
 
 6. Access the admin dashboard
-   - URL: `https://ecommers-backend-hogy.onrender.com/admin`
+   - URL: `http://localhost:5000/admin`
    - Default credentials: username: `admin`, password: `admin123`
 
 ## Development
