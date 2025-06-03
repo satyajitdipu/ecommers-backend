@@ -1,5 +1,4 @@
 // orderController.js
-// ...existing code...
 const db = require('../models/db');
 const { v4: uuidv4 } = require('uuid');
 const sendEmail = require('../utils/emailService');
@@ -39,7 +38,7 @@ exports.placeOrder = (req, res) => {
     if (err) return res.status(500).send('Database error.');
 
     // Simulate inventory update
-    db.query('UPDATE products SET inventory = inventory - ? WHERE id = ?', [data.quantity, data.product_id]);
+    db.query('UPDATE product SET inventory = inventory - ? WHERE id = ?', [data.quantity, data.product_id]);
 
     // Send Email
     const emailHTML = `
@@ -62,3 +61,16 @@ exports.getOrder = (req, res) => {
     res.json(result[0]);
   });
 };
+
+// productRoutes.js
+const express = require('express');
+const router = express.Router();
+const productController = require('../controllers/productController');
+
+router.get('/products', productController.getAllproduct);
+router.get('/products/:id', productController.getProductById);
+router.post('/products', productController.createProduct);
+router.put('/products/:id', productController.updateProduct);
+router.delete('/products/:id', productController.deleteProduct);
+
+module.exports = router;

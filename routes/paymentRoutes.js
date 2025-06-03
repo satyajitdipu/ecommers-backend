@@ -38,7 +38,7 @@ router.get('/payment/order/:orderId', async (req, res) => {
   const { orderId } = req.params;
   try {
     const [results] = await db.promise().query(
-      'SELECT o.*, p.name, p.price, p.variant FROM orders o JOIN products p ON o.product_id = p.id WHERE o.id = ?',
+      'SELECT o.*, p.name, p.price, p.variant FROM orders o JOIN product p ON o.product_id = p.id WHERE o.id = ?',
       [orderId]
     );
     if (!results || results.length === 0) {
